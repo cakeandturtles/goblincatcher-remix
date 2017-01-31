@@ -47,6 +47,14 @@ catchSound.oncanplaythrough = function(){
 };
 catchSound.src = "goblin/sounds/catch.wav";
 
+//sound for catching a goblin player 2
+var catch2Ready = false;
+var catch2Sound = document.createElement("audio");
+catch2Sound.oncanplaythrough = function(){
+  catch2Ready = true;
+};
+catch2Sound.src = "goblin/sounds/catch2.wav";
+
 //sound for catching a gold goblin
 var goldReady = false;
 var goldSound = document.createElement("audio");
@@ -54,6 +62,14 @@ goldSound.oncanplaythrough = function(){
   goldReady = true;
 };
 goldSound.src = "goblin/sounds/gold.wav";
+
+//sound for catching a gold goblin player 2
+var gold2Ready = false;
+var gold2Sound = document.createElement("audio");
+gold2Sound.oncanplaythrough = function(){
+  gold2Ready = true;
+};
+gold2Sound.src = "goblin/sounds/gold2.wav";
 
 //sound for catching a special goblin
 var specialReady = false;
@@ -63,11 +79,19 @@ specialSound.oncanplaythrough = function(){
 };
 specialSound.src = "goblin/sounds/specialGoblin.wav";
 
+//sound for catching a special goblin player 2
+var special2Ready = false;
+var special2Sound = document.createElement("audio");
+special2Sound.oncanplaythrough = function(){
+  special2Ready = true;
+};
+special2Sound.src = "goblin/sounds/specialGoblin2.wav";
+
 //sound for awakening a statue
 var awakenReady = false;
 var awakenSound = document.createElement("audio");
 awakenSound.oncanplaythrough = function(){
- awakenReady = true; 
+ awakenReady = true;
 };
 awakenSound.src = "goblin/sounds/awaken.wav";
 

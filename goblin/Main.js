@@ -2,7 +2,7 @@ var isMSIE = /*@cc_on!@*/0;
 var playSound = true;
 
 if (isMSIE){
-  playSound = false; 
+  playSound = false;
 }
 
 if (navigator.userAgent.match(/AppleWebKit/) && ! navigator.userAgent.match(/Chrome/)) {
@@ -24,12 +24,12 @@ addEventListener("mousedown", function(e){
 	e = e || window.event;
 	var button = e.which || e.button;
 	//left mouse button clicked
-	if (button === 1){	
+	if (button === 1){
 		var box = canvas.getBoundingClientRect();
-	
+
 		var x = (e.clientX - box.left);
 		var y = (e.clientY - box.top);
-		
+
 		if (x > 3 && x < 54 && y > 3 && y < 54){
 			mouse_down = true;
 		}
@@ -40,15 +40,15 @@ addEventListener("mouseup", function(e){
 	e = e || window.event;
 	var button = e.which || e.button;
 	//left mouse button clicked
-	if (button === 1){	
+	if (button === 1){
 		var box = canvas.getBoundingClientRect();
-	
+
 		var x = (e.clientX - box.left);
 		var y = (e.clientY - box.top);
-		
+
 		if (x > 3 && x < 54 && y > 3 && y < 54 && mouse_down){
 			playSound = !playSound;
-			
+
 			if (playSound){
 				buttonSound.currentTime=0;
 				buttonSound.play();
@@ -105,13 +105,15 @@ var main = function(){
 
     if (!isGameOver && !isPaused)
     {
-      for (i in statues)
-        statues[i].Update(delta/1000);
+      // for (i in statues)
+      //   statues[i].Update(delta/1000);
 
       hero.Update(delta/1000);
+      if (two_players) player2.Update(delta/1000);
       if (tempScore>maxScore)
         maxScore=tempScore;
-      goblin.Update(delta/1000);
+      for (i in goblins)
+        goblins[i].Update(delta/1000);
       potion.Update();
     }
     else{
@@ -134,7 +136,7 @@ var main = function(){
     }
 
     Render();
-    then = now; 
+    then = now;
     //time variable so we can make the speed right no matter how fast the script
   }
 };
@@ -145,13 +147,16 @@ var isPaused = false;
 var pauseHelper = false;
 var isGameOver = false;
 var tempScore = 0;
+var goblinsCaught = 0;
 var maxScore = getScore("goblincatcher");
 if (maxScore==null || maxScore=="" || maxScore==undefined)
   maxScore=0;
 
 //object variables
-var hero = new Hero();
-var goblin = new Goblin();
+var two_players = true;
+var hero = new Hero(1);
+var player2;
+var goblins = [new Goblin()];
 var potion = new Powerup();
 
 var statues = new Array();
@@ -168,23 +173,37 @@ solids[3] = new Solid(0, GAME_HEIGHT, GAME_WIDTH, 16);
 
 
 //Let's play the game!
-reset(goblin);
+for (i in goblins) reset(goblins[i]);
 potion.WhichPowerup();
 
 var then = Date.now();
 LoadScreen();
+Reset();
 setInterval(main,17); //Execute as fast as possible!!!
 
-var Reset = function(){
+function Reset(){
   tempScore = 0;
+  goblinsCaught = 0;
   hero.x = GAME_WIDTH/2;
   hero.y = GAME_HEIGHT/2;
   hero.currAni = 0;
   hero.powerup="none";
   hero.powerupTime=0;
 
-  reset(goblin);
-  goblin.special = false;
+  if (two_players) {
+    hero.x -= 64;
+    player2 = new Hero(2);
+    player2.x = GAME_WIDTH/2+64;
+    player2.y = GAME_HEIGHT/2;
+    player2.currAni = 0;
+    player2.powerup="none";
+    player2.powerupTime=0;
+  }
+
+  for (i in goblins) {
+    reset(goblins[i]);
+    goblins[i].special = false;
+  }
   potion.WhichPowerup();
 
   for (i in statues)

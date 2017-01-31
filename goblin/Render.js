@@ -4,16 +4,16 @@ var fontColor = "rgb(0,0,0)"
 //base function to draw images to screen
 var ObjectDrawImage = function(image){
   ctx.drawImage(image, this.currFrame*this.frameWidth, this.currAni*this.frameHeight,
-                this.frameWidth, this.frameHeight, ~~ (this.x+0.5), ~~ (this.y+0.5), 
+                this.frameWidth, this.frameHeight, ~~ (this.x+0.5), ~~ (this.y+0.5),
                 this.frameWidth/2, this.frameHeight/2);
-  
+
   //do the weird tilda thing (called bitwise operation something) to round the x, y values
   //so javascript won't try to draw to canvas between pixels and antialias
 };
 
 var ObjectDrawImageHead = function(image){
 	ctx.drawImage(image, this.currFrame*this.frameWidth, this.currAni*this.frameHeight,
-                this.frameWidth, this.frameHeight/2, ~~ (this.x+0.5), ~~ (this.y+0.5), 
+                this.frameWidth, this.frameHeight/2, ~~ (this.x+0.5), ~~ (this.y+0.5),
                 this.frameWidth/2, this.frameHeight/2);
 };
 
@@ -67,24 +67,25 @@ var Render = function(){ //THE ORDER OF THE DRAWING determines layers
 
 
 
-  for (var i in statues)
-  {
-    if (!statues[i].visible) continue;
-    if (statues[i].id%2==0)
-      statues[i].DrawImage(statueImage);
-    else
-    {
-      statues[i].DrawImage(statueImageFlipped);
-    }
-  }
+  // for (var i in statues)
+  // {
+  //   if (!statues[i].visible) continue;
+  //   if (statues[i].id%2==0)
+  //     statues[i].DrawImage(statueImage);
+  //   else
+  //   {
+  //     statues[i].DrawImage(statueImageFlipped);
+  //   }
+  // }
 
-  goblin.DrawImage(monsterImage);
+  for (var i in goblins)
+    goblins[i].DrawImage(monsterImage);
 
 
   if (potion.visible){
     potion.DrawImage(powerupImage);
   }
-  
+
   if (hero.powerupTime<=60 && hero.powerupTime%10===0 && hero.powerupTime!==0)
     losePowerupFlash = !losePowerupFlash;
   else if (hero.powerupTime===0) losePowerupFlash = false;
@@ -117,19 +118,20 @@ var Render = function(){ //THE ORDER OF THE DRAWING determines layers
     else
       hero.DrawImage(heroStatue);
   }
-  
+  if (two_players) player2.DrawImage(heroBlue);
+
   //draw object's heads
-  for (var i in statues)
-  {
-    if (!statues[i].visible) continue;
-    if (statues[i].id%2==0)
-      ObjectDrawImageHead(statueImage);
-    else
-    {
-      ObjectDrawImageHead(statueImageFlipped);
-    }
-  }
-  
+  // for (var i in statues)
+  // {
+  //   if (!statues[i].visible) continue;
+  //   if (statues[i].id%2==0)
+  //     ObjectDrawImageHead(statueImage);
+  //   else
+  //   {
+  //     ObjectDrawImageHead(statueImageFlipped);
+  //   }
+  // }
+
   ObjectDrawImageHead(monsterImage);
 
 
@@ -150,7 +152,7 @@ var Render = function(){ //THE ORDER OF THE DRAWING determines layers
     ctx.fillStyle = maxFontColor;
     ctx.fillText(maxScore, 232, 80);
     ctx.fillStyle = "rgb(255,255,255)";
-    
+
     if (isPaused){
       ctx.fillText("GAME PAUSED", 80, GAME_HEIGHT/2+16);
       ctx.fillText("PRESS ENTER TO CONTINUE", 8, GAME_HEIGHT-32);

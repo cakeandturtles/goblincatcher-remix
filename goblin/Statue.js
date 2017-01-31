@@ -18,7 +18,7 @@ var Statue = function(x, y, id){
   this.chase = 0;
   this.direction = "DOWN";
   this.id = id;
-  
+
   //Animation stuff
   this.visible = true;
   this.frameCount=0;
@@ -40,10 +40,10 @@ var StatueUpdate = function(modifier){
   {
     this.speed = (tempScore) + 60;
     if (this.speed>150){
-      this.speed=150; 
+      this.speed=150;
     }
     if (hero.powerup==="stealth") this.speed/=2;
- 
+
     var checkArea = 4*(tempScore/25)+32;
 
     if (Collision(this.x+this.lb-checkArea, this.y+this.tb-checkArea,
@@ -52,7 +52,7 @@ var StatueUpdate = function(modifier){
       this.start = 10;
       this.alive = 80+Math.round(Math.random()*80);
       this.chase = 10*(this.id+1);
-    
+
       if (playSound) {
         awakenSound.currentTime=0;
         awakenSound.play();
@@ -61,8 +61,8 @@ var StatueUpdate = function(modifier){
       this.currAni = 1;
       this.direction = this.WhichDirection();
     }
-  
-    if (this.alive>0){ 
+
+    if (this.alive>0){
       if (this.start === 0)
       {
         //put the logic for chasing the player down here
@@ -74,7 +74,7 @@ var StatueUpdate = function(modifier){
             this.yvel = (-1)*(this.speed*modifier);
           if (this.direction==="UPRIGHT"){
             this.yvel = (-0.71)*(this.speed*modifier);
-            this.xvel = (0.71)*(this.speed*modifier); 
+            this.xvel = (0.71)*(this.speed*modifier);
           }
           if (this.direction==="DOWN")
             this.yvel = (this.speed*modifier);
@@ -96,7 +96,7 @@ var StatueUpdate = function(modifier){
           }
         }
         else {
-          this.chase = 10*(this.id+1);
+          this.chase = 100;
           if (hero.powerup!=="stealth")
             this.direction = this.WhichDirection();
         }
@@ -116,22 +116,22 @@ var StatueUpdate = function(modifier){
       this.chase = 0;
       this.alive = 0;
     }
-  
+
     //horizontal solid collisions
     for (i in solids){
-      var xspd = this.x + this.xvel; 
- 
+      var xspd = this.x + this.xvel;
+
       //left solid collision
-      if (Collision(xspd+this.lb, this.y+this.tb, 
+      if (Collision(xspd+this.lb, this.y+this.tb,
                     this.x+this.lb, this.y+this.bb, solids[i])){
         this.xvel = 0;
         while (!Collision(this.x+this.lb-1, this.y+this.tb,
                            this.x+this.lb, this.y+this.bb, solids[i]))
           this.x--;
       }
-    
+
       //right solid collision
-      if (Collision(this.x+this.rb, this.y+this.tb, 
+      if (Collision(this.x+this.rb, this.y+this.tb,
                     xspd+this.rb, this.y+this.bb, solids[i])){
         this.xvel = 0;
         while (!Collision(this.x+this.lb, this.y+this.tb ,
@@ -140,11 +140,11 @@ var StatueUpdate = function(modifier){
       }
     }
     this.x += this.xvel;
-  
+
     //vertical solid collisions
     for (i in solids){
       var yspd = this.y+this.yvel;
-        
+
       //top solid collision
       if (Collision(this.x+this.lb, yspd+this.tb,
                     this.x+this.rb, this.y+this.tb, solids[i]))
@@ -179,7 +179,7 @@ var StatueUpdate = function(modifier){
       }
     }
   }
-  
+
   if (++this.frameCount >= this.frameDelay)
   {
     if (++this.currFrame >= this.maxFrame)
@@ -199,7 +199,7 @@ var StatueUpdate = function(modifier){
         this.frameDelay = 15;
         this.flashCount = 0;
       }
-      
+
       this.currFrame = 0;
     }
     this.frameCount = 0;

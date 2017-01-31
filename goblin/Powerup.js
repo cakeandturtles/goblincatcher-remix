@@ -27,22 +27,24 @@ var Powerup = function(){
 };
 
 var PowerupUpdate = function(){
-  if (tempScore>=this.powerupScore && !this.visible && hero.powerup==="none")
+  if (goblinsCaught>=this.powerupScore && !this.visible && hero.powerup==="none")
     this.visible=true;
 
   //reset if touching a statue or goblin
   for (i in statues){
-    if (Collision(this.x+this.lb, this.y+this.tb, 
+    if (Collision(this.x+this.lb, this.y+this.tb,
                   this.x+this.rb, this.y+this.bb, statues[i])){
       reset(this);
     }
   }
 
-  if (Collision(this.x+this.lb, this.y+this.tb,
-                this.x+this.rb, this.y+this.bb, goblin)){
-    reset(this);
+  for (i in goblins) {
+    if (Collision(this.x+this.lb, this.y+this.tb,
+                  this.x+this.rb, this.y+this.bb, goblins[i])){
+      reset(this);
+    }
   }
-  
+
   //Animation Update
   if (++this.frameCount >= this.frameDelay)
   {
@@ -56,8 +58,8 @@ var WhichPowerup = function(){
   reset(this);
   this.visible=false;
   this.powerupTime=0;
-  this.powerupScore=tempScore+Math.floor((Math.random()*16))+5;
-  
+  this.powerupScore=goblinsCaught+Math.floor((Math.random()*16))+5;
+
 
   //we'll use this.currAni as the dummy random holder to calculate which powerup
   //which is also useful because currAni will be used to pick the powerup animation
@@ -75,5 +77,5 @@ var WhichPowerup = function(){
 	this.powerup="speed";
   else //although we should never get here...
     this.powerup="none";
-  
+
 };

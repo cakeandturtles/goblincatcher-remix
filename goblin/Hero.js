@@ -1,4 +1,6 @@
-var Hero = function(){
+var Hero = function(player_number){
+  this.player_number = player_number;
+
   //members
   this.speed = 162; //pixels/second
   this.x = GAME_WIDTH/2;
@@ -34,45 +36,76 @@ var Hero = function(){
 var HeroUpdate = function(modifier)
 {
   //first, catch goblins!!
-  if (Collision(this.x+this.lb,this.y+this.tb,this.x+this.rb,this.y+this.bb,goblin)){
-    if (!goblin.special){
-      ++tempScore;
-      if (this.powerup==="goldGoblin")
-        ++tempScore;
-    }
-    else
-      tempScore = tempScore+3;
-    
-    if (playSound){
-      if (goblin.special){
-        specialSound.currentTime=0;
-        specialSound.play();
+  for (i in goblins) {
+    let goblin = goblins[i];
+    if (Collision(this.x+this.lb,this.y+this.tb,this.x+this.rb,this.y+this.bb,goblin)){
+      goblinsCaught++;
+      if (goblinsCaught % 10 == 0) {
+        goblins.push(new Goblin());
+        reset(goblins[goblins.length-1]);
       }
-      else{
-        if (this.powerup==="goldGoblin"){
-          goldSound.currentTime=0;
-          goldSound.play();
+      if (this.player_number == 1) {
+        if (!goblin.special){
+          ++tempScore;
+          if (this.powerup==="goldGoblin")
+            ++tempScore;
+        }
+        else
+          tempScore = tempScore+3;
+      } else {
+        if (!goblin.special){
+          --tempScore;
+          if (this.powerup==="goldGoblin")
+            --tempScore;
+        }
+        else
+          tempScore = tempScore-3;
+      }
+
+      if (playSound){
+        if (goblin.special){
+          specialSound.currentTime=0;
+          special2Sound.currentTime=0;
+          if (this.player_number == 1)
+            specialSound.play();
+          else
+            special2Sound.play();
         }
         else{
-          catchSound.currentTime=0;
-          catchSound.play();
+          if (this.powerup==="goldGoblin"){
+            goldSound.currentTime=0;
+            gold2Sound.currentTime=0;
+            if (this.player_number == 1)
+              goldSound.play();
+            else
+              gold2Sound.play();
+          }
+          else{
+            catchSound.currentTime=0;
+            catch2Sound.currentTime=0;
+            if (this.player_number == 1)
+              catchSound.play();
+            else
+              catch2Sound.play();
+          }
+        }
+
+        if ((tempScore%25===0 && tempScore!=0 && tempScore<=100)
+           || tempScore===150 || tempScore===200 ||
+           (tempScore > 255 && tempScore%25==0)){
+          powerupSound.currentTime=0;
+          powerupSound.play();
+        }
+        if (tempScore===255){
+          winSound.currentTime=0;
+          winSound.play();
         }
       }
-      
-      if ((tempScore%25===0 && tempScore!=0 && tempScore<=100)
-         || tempScore===150 || tempScore===200){
-        powerupSound.currentTime=0;
-        powerupSound.play();
-      }
-      if (tempScore===255){
-        winSound.currentTime=0;
-        winSound.play();
-      }
+      if (reset(goblin)===0)
+        goblin.special = true;
+      else
+        goblin.special = false;
     }
-    if (reset(goblin)===0)
-      goblin.special = true;
-    else
-      goblin.special = false;
   }
 
   //then, collect powerups!!!
@@ -104,10 +137,10 @@ var HeroUpdate = function(modifier)
   for (i in statues){
     if (statues[i].alive !== 0)
     {
-      if (Collision(this.x+this.lb, this.y+this.tb, 
+      if (Collision(this.x+this.lb, this.y+this.tb,
                   this.x+this.rb, this.y+this.bb, statues[i])){
         if (this.powerup!="stoneSkin"){
-          isGameOver=true; 
+          isGameOver=true;
           if (playSound){
             dieSound.currentTime=0;
             dieSound.play();
@@ -149,7 +182,7 @@ var HeroUpdate = function(modifier)
     this.x += this.xvel;
   else
     this.x += this.xvel*.71;
-  
+
   //vertical solid collisions
   for (i in solids){
     this.VerticalSolidCollision(solids[i]);
@@ -162,41 +195,41 @@ var HeroUpdate = function(modifier)
     this.y += this.yvel;
   else
     this.y += this.yvel*.71;
-  
+
   // check for keyboard input
-  if (38 in keysDown || 87 in keysDown){ //Up key
+  if ((38 in keysDown && this.player_number == 1) || (87 in keysDown && this.player_number == 2)){ //Up key
     this.yvel = (-1)*this.speed*modifier; }
-  else if (40 in keysDown || 83 in keysDown){ //Down key
+  else if ((40 in keysDown && this.player_number == 1) || (83 in keysDown && this.player_number == 2)){ //Down key
     this.yvel = this.speed*modifier; }
   else{
-    this.yvel = 0; 
+    this.yvel = 0;
   }
-  if (37 in keysDown || 65 in keysDown){ //Left key
+  if ((37 in keysDown && this.player_number == 1) || (65 in keysDown && this.player_number == 2)){ //Left key
     this.xvel = (-1)*this.speed*modifier; }
-  else if (39 in keysDown || 68 in keysDown){ //Right key
+  else if ((39 in keysDown && this.player_number == 1) || (68 in keysDown && this.player_number == 2)){ //Right key
     this.xvel = this.speed*modifier; }
   else{
-    this.xvel = 0; 
+    this.xvel = 0;
   }
-  
+
   this.UpdateAnimation()
 };
 
 var HeroHoriSolidCollision = function(solid)
 {
   var xspd = this.x + this.xvel;
- 
+
   //left solid collision
-  if (Collision(xspd+this.lb, this.y+this.tb, 
+  if (Collision(xspd+this.lb, this.y+this.tb,
                 this.x+this.lb, this.y+this.bb, solid)){
     this.xvel = 0;
     while (!Collision(this.x+this.lb-1, this.y+this.tb,
                        this.x+this.lb, this.y+this.bb, solid))
       this.x--;
   }
-    
+
   //right solid collision
-  if (Collision(this.x+this.rb, this.y+this.tb, 
+  if (Collision(this.x+this.rb, this.y+this.tb,
                 xspd+this.rb, this.y+this.bb, solid)){
     this.xvel = 0;
     while (!Collision(this.x+this.lb, this.y+this.tb ,
@@ -208,7 +241,7 @@ var HeroHoriSolidCollision = function(solid)
 var HeroVertSolidCollision = function(solid)
 {
   var yspd = this.y+this.yvel;
-      
+
   //top solid collision
   if (Collision(this.x+this.lb, yspd+this.tb,
                 this.x+this.rb, this.y+this.tb, solid))
@@ -228,15 +261,15 @@ var HeroVertSolidCollision = function(solid)
   }
 };
 
-var HeroUpdateAnimation = function(){  
+var HeroUpdateAnimation = function(){
   //CHANGE SPRITE DIRECTION/ANIMATION
-  if (keysDown[38] || keysDown[87]) //UP KEY
+  if ((keysDown[38] && this.player_number == 1) || (keysDown[87] && this.player_number == 2)) //UP KEY
     this.currAni = 2;
-  else if (keysDown[40] || keysDown[83]) //DOWN KEY
+  else if ((keysDown[40] && this.player_number == 1) || (keysDown[83] && this.player_number == 2)) //DOWN KEY
     this.currAni = 0;
-  else if (keysDown[37] || keysDown[65]) //LEFT KEY
+  else if ((keysDown[37] && this.player_number == 1) || (keysDown[65] && this.player_number == 2)) //LEFT KEY
     this.currAni = 1;
-  else if (keysDown[39] || keysDown[68]) //RIGHT KEY
+  else if ((keysDown[39] && this.player_number == 1) || (keysDown[68] && this.player_number == 2)) //RIGHT KEY
     this.currAni = 3;
 
   //change speed of animation if you're walking
