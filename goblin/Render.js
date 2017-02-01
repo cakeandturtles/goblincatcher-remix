@@ -91,14 +91,14 @@ var Render = function(){ //THE ORDER OF THE DRAWING determines layers
   else if (hero.powerupTime===0) losePowerupFlash = false;
 
   //choose hero color
-  if (hero.powerup==="stoneSkin" && !losePowerupFlash)
+  if (hero.powerup==="stoneSkin" && !losePowerupFlash && story == 0)
     hero.DrawImage(heroGrey);
-  else if (hero.powerup==="stealth" && !losePowerupFlash)
+  else if (hero.powerup==="stealth" && !losePowerupFlash && story == 0)
     hero.DrawImage(heroStealth);
-  else if (hero.powerup==="goblinPheremones" && !losePowerupFlash)
+  else if (hero.powerup==="goblinPheremones" && !losePowerupFlash && story == 0)
     hero.DrawImage(heroGoblin);
-  else if (hero.powerup=="speed" && !losePowerupFlash)
-	hero.DrawImage(heroSpeed);
+  else if (hero.powerup=="speed" && !losePowerupFlash && story == 0)
+	 hero.DrawImage(heroSpeed);
   else
   {
     if (goblinsCaught<25)
