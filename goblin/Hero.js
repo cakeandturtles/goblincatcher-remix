@@ -39,72 +39,50 @@ var HeroUpdate = function(modifier)
   for (i in goblins) {
     let goblin = goblins[i];
     if (Collision(this.x+this.lb,this.y+this.tb,this.x+this.rb,this.y+this.bb,goblin)){
-      goblinsCaught++;
-      if (goblinsCaught % 10 == 0) {
-        goblins.push(new Goblin());
-        reset(goblins[goblins.length-1]);
-      }
-      if (this.player_number == 1) {
-        if (!goblin.special){
-          ++tempScore;
-          if (this.powerup==="goldGoblin")
-            ++tempScore;
+      if (story >= 3 && goblin.currAni >= 6 && goblin.visible) {
+        tempScore--;
+        goblin.visible = false;
+        if (playSound) {
+          special2Sound.currentTime = 0;
+          special2Sound.play();
         }
-        else
-          tempScore = tempScore+3;
-      } else {
-        if (!goblin.special){
-          --tempScore;
-          if (this.powerup==="goldGoblin")
-            --tempScore;
-        }
-        else
-          tempScore = tempScore-3;
       }
+      else if (story == 0) {
+        progressStoryCatch(goblin);
 
-      if (playSound){
-        if (goblin.special){
-          specialSound.currentTime=0;
-          special2Sound.currentTime=0;
-          if (this.player_number == 1)
-            specialSound.play();
-          else
-            special2Sound.play();
-        }
-        else{
-          if (this.powerup==="goldGoblin"){
-            goldSound.currentTime=0;
-            gold2Sound.currentTime=0;
+        if (playSound && story == 0){
+          if (goblin.special){
+            specialSound.currentTime=0;
+            special2Sound.currentTime=0;
             if (this.player_number == 1)
-              goldSound.play();
+              specialSound.play();
             else
-              gold2Sound.play();
+              special2Sound.play();
           }
           else{
-            catchSound.currentTime=0;
-            catch2Sound.currentTime=0;
-            if (this.player_number == 1)
-              catchSound.play();
-            else
-              catch2Sound.play();
+            if (this.powerup==="goldGoblin"){
+              goldSound.currentTime=0;
+              gold2Sound.currentTime=0;
+              if (this.player_number == 1)
+                goldSound.play();
+              else
+                gold2Sound.play();
+            }
+            else{
+              catchSound.currentTime=0;
+              catch2Sound.currentTime=0;
+              if (this.player_number == 1)
+                catchSound.play();
+              else
+                catch2Sound.play();
+            }
           }
         }
-
-        if ((tempScore%25===0 && tempScore!=0 && tempScore<=100)
-           || tempScore===150 || tempScore===200 ||
-           (tempScore > 255 && tempScore%25==0)){
-          powerupSound.currentTime=0;
-          powerupSound.play();
-        }
-        if (tempScore===255){
-          winSound.currentTime=0;
-          winSound.play();
-        }
+        if (reset(goblin)===0)
+          goblin.special = true;
+        else
+          goblin.special = false;
       }
-      if (reset(goblin)===0)
-        goblin.special = true;
-      else
-        goblin.special = false;
     }
   }
 
@@ -118,7 +96,7 @@ var HeroUpdate = function(modifier)
       powerupSound.play();
     }
   }
-  if (this.powerup!=="none"){
+  if (this.powerup!=="none" && story == 0){
     this.powerupTime--;
     if (this.powerupTime===0){
       this.powerup="none";

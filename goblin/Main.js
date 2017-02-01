@@ -88,13 +88,139 @@ addEventListener("keyup", function(e) {
   if (e.keyCode === 83 && keysDown[87] !== undefined) keysDown[87] = true;
 }, false);
 
+addEventListener("keypress", function(e) {
+  if (story < 2 || story > 3 || tempScore >= 10) return;
+  /* X key lowercase and uppercase (dumb)*/
+  if (e.keyCode == 88 || e.keyCode == 120) {
+    tempScore++;
+    story = 3;
+    var goblinPlant = new Goblin();
+    goblinPlant.x = hero.x;
+    goblinPlant.y = hero.y;
+    var cooties = false;
+    goblins.forEach(function(goblin) {
+      if (Collision(goblin.x+goblin.lb,goblin.y+goblin.tb,goblin.x+goblin.rb,goblin.y+goblin.bb,goblinPlant)) {
+        cooties = true;
+      }
+    });
+    if (cooties) {
+      reset(goblinPlant);
+    }
+
+    goblinPlant.x  = Math.floor(goblinPlant.x / 8) * 8;
+    goblinPlant.y  = Math.floor(goblinPlant.y / 8) * 8;
+    goblinPlant.currAni = 3;
+    goblinPlant.visible = true;
+    goblins.push(goblinPlant);
+    var timer = window.setInterval(function(plant, tim) {
+      if (plant.currAni < 6) plant.currAni++;
+      if (plant.currAni == 6) {
+        window.clearInterval(tim);
+      }
+    }.bind(this, goblinPlant, timer), 1000);
+    if (playSound) {
+      plantSound.currentTime = 0;
+      plantSound.play();
+    }
+  }
+}, false);
+
 //Reset the game when the player catches a monster
 var reset = function(resetMe){
   //Throw the monster somewhere on the screen
-  resetMe.x = 32 + (Math.random()*(GAME_WIDTH-64));
-  resetMe.y = 60 + (Math.random()*(GAME_HEIGHT-84));
+  resetMe.x = 16 + (Math.random()*(GAME_WIDTH-48));
+  resetMe.y = 74 + (Math.random()*(GAME_HEIGHT-104));
   return Math.round(Math.random()*30);
 };
+
+var progressStoryCatch = function(goblin) {
+  switch (story) {
+    case 0: chapterOneCatch(goblin); break;
+    case 1: chapterTwoCatch(goblin); break;
+  }
+
+};
+
+var beat = 0;
+var storyText = "";
+var chapterOneCatch = function(goblin) {
+  goblinsCaught++;
+  if ((goblinsCaught < 20 && goblinsCaught % 10 == 0) ||
+      (goblinsCaught < 100 && goblinsCaught >= 20 && goblinsCaught % 20 == 0) ||
+      (goblinsCaught < 500 && goblinsCaught >= 100 && goblinsCaught % 5 == 0) ||
+      (goblinsCaught >= 500 && goblinsCaught % 5 == 0)) {
+    if (goblinsCaught < 20) {
+      powerupSound.currentTime=0;
+      powerupSound.play();
+    }
+    console.log("next!");
+    goblins.push(new Goblin());
+    reset(goblins[goblins.length-1]);
+  }
+  if (goblinsCaught >= 1000) {
+    story++;
+    hero.powerupTime = 1;
+
+    winSound.currentTime=0;
+    winSound.play();
+
+    ///////////////////////////////////////////////////// ALL THE GOBLINS DISAPPEAR
+    storyTimer = window.setInterval(function() {
+      if (goblins.length > 500) {
+        goblins.splice(0, 5);
+      }
+      else if (goblins.length > 100) {
+        goblins.splice(0, 3);
+      }
+      else if (goblins.length > 10) {
+        goblins.splice(0, 1);
+      }
+      else if (goblins.length > 1) {
+        beat++;
+        if (beat == 5) {
+          goblins.splice(0, 1);
+          beat = 0;
+        }
+      } else if (goblins.length == 1) {
+        beat++;
+        if (beat == 50) {
+          goblins = [];
+          beat = 0;
+        }
+      }
+
+
+      if (goblins.length == 0) {
+        window.clearInterval(storyTimer);
+        ///////////////////////////////////////////////////////////// PRESS X to plant the goblins!!!
+        storyTimer = window.setTimeout(function() {
+          story++;
+          tempScore = 0;
+          storyTimer = window.setInterval(function() {
+            var finalText = ". . . Press X";
+            if (storyText == finalText) {
+              window.clearInterval(storyTimer);
+            }
+            storyText += finalText.substr(storyText.length, 1);
+          }, 300);
+        }, 3000);
+      }
+      if (playSound && beat == 0) {
+        catch2Sound.currentTime = 0;
+        catch2Sound.play();
+      }
+    }, 100);
+  }
+  if (!goblin.special){
+    ++tempScore;
+    if (this.powerup==="goldGoblin")
+      ++tempScore;
+  }
+  else
+    tempScore = tempScore+3;
+};
+
+var chapterTwoCatch = function(goblin) { };
 
 //main game loop
 var main = function(){
@@ -114,6 +240,10 @@ var main = function(){
         maxScore=tempScore;
       for (i in goblins)
         goblins[i].Update(delta/1000);
+      for (i = goblins.length-1; i >= 0; i--) {
+        if (!goblins[i].visible)
+          goblins.splice(i, 1);
+      }
       potion.Update();
     }
     else{
@@ -152,8 +282,10 @@ var maxScore = getScore("goblincatcher");
 if (maxScore==null || maxScore=="" || maxScore==undefined)
   maxScore=0;
 
+var story = 0;
+var storyTimer = null;
 //object variables
-var two_players = true;
+var two_players = false;
 var hero = new Hero(1);
 var player2;
 var goblins = [new Goblin()];

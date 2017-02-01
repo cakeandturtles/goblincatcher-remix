@@ -139,6 +139,13 @@ losePowerSound.oncanplaythrough = function(){
 };
 losePowerSound.src = "goblin/sounds/losePower.wav";
 
+var plantReady = false;
+var plantSound = document.createElement("audio");
+plantSound.oncanplaythrough = function() {
+  plantReady = true;
+};
+plantSound.src = "goblin/sounds/plant.wav";
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //Load Images

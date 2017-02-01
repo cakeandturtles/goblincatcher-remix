@@ -101,22 +101,22 @@ var Render = function(){ //THE ORDER OF THE DRAWING determines layers
 	hero.DrawImage(heroSpeed);
   else
   {
-    if (tempScore<25)
+    if (goblinsCaught<25)
       hero.DrawImage(heroImage);
-    else if (tempScore<50)
+    else if (goblinsCaught<50)
       hero.DrawImage(heroGreen);
-    else if (tempScore<75)
+    else if (goblinsCaught<100)
       hero.DrawImage(heroBlue);
-    else if (tempScore<100)
+    else if (goblinsCaught<250)
       hero.DrawImage(heroPurple);
-    else if (tempScore<150)
+    else if (goblinsCaught<400)
       hero.DrawImage(heroBW);
-    else if (tempScore<200)
+    else if (goblinsCaught<500)
       hero.DrawImage(heroGold);
-    else if (tempScore<255)
+    else if (goblinsCaught<1000)
       hero.DrawImage(heroNegative);
     else
-      hero.DrawImage(heroStatue);
+      hero.DrawImage(heroGrey);
   }
   if (two_players) player2.DrawImage(heroBlue);
 
@@ -135,11 +135,12 @@ var Render = function(){ //THE ORDER OF THE DRAWING determines layers
   ObjectDrawImageHead(monsterImage);
 
 
-  if (potion.visible){
+  if (potion.visible && story == 0){
     ObjectDrawImageHead(powerupImage);
   }
 
-
+  // don't allow pausing lol
+  if (isPaused) isPaused = false;
   if (isPaused || isGameOver){
     ctx.fillStyle = "rgb(0, 0, 0)";
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
@@ -170,9 +171,21 @@ var Render = function(){ //THE ORDER OF THE DRAWING determines layers
   ctx.font = "24px pixelFont";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText("Goblins caught: ", 50, 20);
-  ctx.fillStyle = fontColor;
-  ctx.fillText(tempScore, 250, 20);
+  if (story < 2) {
+    ctx.fillText("Goblins caught: ", 50, 20);
+    ctx.fillStyle = fontColor;
+    ctx.fillText(tempScore, 250, 20);
+  } else if (story == 2){
+    ctx.fillStyle = fontColor;
+    ctx.fillText(storyText, 70, 20);
+  } else if (story >= 3) {
+    ctx.fillStyle = "rgb(44,205,21)";
+    ctx.fillText("Goblin plants left: ", 50, 20);
+    ctx.fillStyle = "rgb(255,255,255)";
+    ctx.fillText(10-tempScore, 280, 20);
+    ctx.font = "16px pixelFont";
+    ctx.fillText("that's all btw", 0, 255);
+  }
 
   //Sound/music controller buttons
   var buttonOffset = 0;

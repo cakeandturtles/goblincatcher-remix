@@ -22,11 +22,12 @@ var Goblin = function(){
   //methods
   this.Update = GoblinUpdate;
   this.DrawImage = ObjectDrawImage;
+  this.visible = true;
 };
 
 var GoblinUpdate = function(modifier){
   for (i in statues){
-    if (Collision(this.x+this.lb, this.y+this.tb, 
+    if (Collision(this.x+this.lb, this.y+this.tb,
                   this.x+this.rb, this.y+this.bb, statues[i])){
       if (reset(this)===0)
         this.special = true;
@@ -50,13 +51,15 @@ var GoblinUpdate = function(modifier){
   }
 
   //Animation Update
-  if (this.special)
-    this.currAni=2;
-  else{
-    if (hero.powerup==="goldGoblin" && !losePowerupFlash)
-      this.currAni=1;
-    else
-      this.currAni=0;
+  if (story < 10) {
+    if (this.special && story == 0)
+      this.currAni=2;
+    else if (story == 0){
+      if (hero.powerup==="goldGoblin" && !losePowerupFlash )
+        this.currAni=1;
+      else
+        this.currAni=0;
+    }
   }
 
   if (++this.frameCount >= this.frameDelay)

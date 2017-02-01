@@ -63,7 +63,8 @@ var WhichPowerup = function(){
 
   //we'll use this.currAni as the dummy random holder to calculate which powerup
   //which is also useful because currAni will be used to pick the powerup animation
-  this.currAni = Math.floor(Math.random()*5);
+  //this.currAni = Math.floor(Math.random()*5);
+  this.currAni = 2;
 
   if (this.currAni===0)
     this.powerup="stealth";
