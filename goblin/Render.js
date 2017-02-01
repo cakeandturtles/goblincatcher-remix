@@ -183,8 +183,8 @@ var Render = function(){ //THE ORDER OF THE DRAWING determines layers
     ctx.fillText("Goblin plants left: ", 50, 20);
     ctx.fillStyle = "rgb(255,255,255)";
     ctx.fillText(10-tempScore, 280, 20);
-    ctx.font = "16px pixelFont";
-    ctx.fillText("that's all btw", 0, 255);
+    //ctx.font = "16px pixelFont";
+    //ctx.fillText("that's all btw", 0, 255);
   }
 
   //Sound/music controller buttons
