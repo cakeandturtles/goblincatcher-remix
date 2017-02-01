@@ -38,7 +38,7 @@ var GoblinUpdate = function(modifier){
 
 
   //BEING DRAWN TO THE GOBLIN PHEREMONES
-  if (hero.powerup==="goblinPheremones"){
+  if (hero.powerup==="goblinPheremones" && story == 0){
     if (hero.x > this.x+4)
       this.x++;
     else if (hero.x < this.x-4)
